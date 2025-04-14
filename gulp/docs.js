@@ -2,11 +2,10 @@ const gulp = require('gulp')
 const pug = require('gulp-pug')
 const replace = require('gulp-replace')
 
-// HTML
+
 const htmlclean = require('gulp-htmlclean')
 const typograf = require('gulp-typograf')
 
-// SASS
 const sass = require('gulp-sass')(require('sass'))
 const sassGlob = require('gulp-sass-glob')
 const autoprefixer = require('gulp-autoprefixer')
@@ -15,8 +14,7 @@ const csso = require('gulp-csso')
 const server = require('gulp-server-livereload')
 const clean = require('gulp-clean')
 const fs = require('fs')
-const gulpSquoosh = require('gulp-squoosh')
-const path = require('path')
+const squoosh = require('gulp-squoosh')
 const sourceMaps = require('gulp-sourcemaps')
 const groupMedia = require('gulp-group-css-media-queries')
 const plumber = require('gulp-plumber')
@@ -27,14 +25,54 @@ const uglify = require('gulp-uglify')
 const concat = require('gulp-concat')
 const changed = require('gulp-changed')
 const tinypng = require('gulp-tinypng-compress')
-const ffmpeg = require('fluent-ffmpeg')
-
-// SVG
 const svgsprite = require('gulp-svg-sprite')
 
+const paths = {
+	pug: {
+		pages: './src/pug/pages/*.pug',
+	},
+	images: {
+		src: ['./src/assets/images/**/*', '!./src/assets/images/icons/**/*'],
+		build: './build/assets/images/',
+		docs: './docs/assets/images/'
+	},
+	scss: {
+		src: './src/scss/*.scss',
+		build: './build/css/',
+		docs: './docs/css/',
+	},
+	fonts: {
+		src: 'src/assets/fonts/**/*.{ttf,otf,woff,woff2}',
+		build: './build/assets/fonts/',
+		docs: './docs/assets/fonts/',
+	},
+	svg: {
+		src: './src/assets/images/icons/**/*.svg',
+		sprite: '../sprite.svg',
+	},
+	files: {
+		src: './src/files/**/*',
+		build: './build/files/',
+		docs: './docs/files/',
+	},
+	js: {
+		src: './src/js/**/*.js',
+		build: './build/js/',
+		docs: './docs/js/',
+	},
+	videos: {
+		src: './src/assets/videos/**/*',
+		build: './build/assets/videos/',
+		docs: './docs/assets/videos/',
+	},
+	json: './src/contents/',
+	build: './build/',
+	docs: './docs/'
+}
+
 gulp.task('clean:docs', function(done) {
-	if (fs.existsSync('./docs/')) {
-		return gulp.src('./docs/', { read: false }).pipe(clean({ force: true }))
+	if (fs.existsSync(paths.docs)) {
+		return gulp.src(paths.docs, { read: false }).pipe(clean({ force: true }))
 	}
 	done()
 })
@@ -49,6 +87,7 @@ const plumberNotify = title => {
 	}
 }
 
+// json
 function mergeAllJSON(dir) {
 	const files = fs.readdirSync(dir).filter(file => file.endsWith('.json'))
 
@@ -63,11 +102,12 @@ function mergeAllJSON(dir) {
 	return mergedData
 }
 
+//  pug
 gulp.task('pug:docs', function() {
-	const mergedContent = mergeAllJSON('./src/contents')
+	const mergedContent = mergeAllJSON(paths.json)
 	return gulp
-		.src(['./src/pug/pages/*.pug'])
-		.pipe(changed('./docs/'))
+		.src(paths.pug.pages)
+		.pipe(changed(paths.docs))
 		.pipe(plumber(plumberNotify('Pug')))
 		.pipe(pug({ locals: mergedContent, pretty: true }))
 		.pipe(
@@ -87,13 +127,14 @@ gulp.task('pug:docs', function() {
 			})
 		)
 		.pipe(htmlclean())
-		.pipe(gulp.dest('./docs/'))
+		.pipe(gulp.dest(paths.docs))
 })
 
+// styles
 gulp.task('sass:docs', function() {
 	return gulp
-		.src('./src/scss/*.scss')
-		.pipe(changed('./docs/css/'))
+		.src(paths.scss.src)
+		.pipe(changed(paths.scss.docs))
 		.pipe(plumber(plumberNotify('SCSS')))
 		.pipe(sourceMaps.init())
 		.pipe(sassGlob())
@@ -108,39 +149,29 @@ gulp.task('sass:docs', function() {
 		)
 		.pipe(csso())
 		.pipe(sourceMaps.write())
-		.pipe(gulp.dest('./docs/css/'))
+		.pipe(gulp.dest(paths.scss.docs))
 })
 
+// images
 gulp.task('imagesSquoosh', function() {
 	return gulp
-		.src('src/assets/images/**/*.{jpg,png,gif,webp}')
-		.pipe(gulp.dest('temp/images'))
-		.on('end', function() {
-			// Применяем сжатие к каждому изображению с помощью Squoosh
-			gulp
-				.src('temp/images/**/*.{jpg,png,gif,webp}')
-				.pipe(
-					gulpSquoosh({
-						encodeOptions: {
-							webp: {
-								quality: 75,
-							},
-							jpeg: {
-								quality: 75,
-							},
-							png: {
-								compressionLevel: 8,
-							},
-						},
-					})
-				)
-				.pipe(gulp.dest('./docs/assets/images/'))
-		})
+		.src(paths.images.src)
+		.pipe(changed(paths.images.docs))
+		.pipe(
+			squoosh({
+				encodeOptions: {
+					webp: {
+						quality: 75,
+					},
+				},
+			})
+		)
+		.pipe(gulp.dest(paths.images.docs))
 })
 
 // gulp.task('imagesTinypng', function() {
 // 	return gulp
-// 		.src('./src/assets/images/**/*.{png,jpg,jpeg}')
+// 		.src(paths.images.src)
 // 		.pipe(
 // 			tinypng({
 // 				key: '', // Замените на ваш ключ API от TinyPNG
@@ -148,21 +179,20 @@ gulp.task('imagesSquoosh', function() {
 // 				parallelMax: 5, // Максимальное количество параллельных запросов
 // 			})
 // 		)
-// 		.pipe(gulp.dest('./docs/assets/images/'))
+// 		.pipe(gulp.dest(paths.images.docs))
 // })
 
-// Пути к файлам
-const fontsSrc = './src/assets/fonts/**/*.{ttf,otf,woff,woff2}'
-const fontsDest = './docs/assets/fonts'
-
+// fonts
 gulp.task('fonts:docs', function() {
-	return gulp.src(fontsSrc).pipe(gulp.dest(fontsDest))
+	return gulp.src(paths.fonts.src).pipe(gulp.dest(paths.fonts.docs))
 })
 
+
+// svg
 const svgSymbol = {
 	mode: {
 		symbol: {
-			sprite: '../sprite.svg',
+			sprite: paths.svg.sprite,
 		},
 	},
 	shape: {
@@ -185,23 +215,25 @@ const svgSymbol = {
 
 gulp.task('svgSymbol:docs', function() {
 	return gulp
-		.src('./src/assets/images/icons/**/*.svg')
+		.src(paths.svg.src)
 		.pipe(plumber(plumberNotify('SVG')))
 		.pipe(svgsprite(svgSymbol))
-		.pipe(gulp.dest('./docs/assets/images/'))
+		.pipe(gulp.dest(paths.images.docs))
 })
 
+// files
 gulp.task('files:docs', function() {
 	return gulp
-		.src('./src/files/**/*')
-		.pipe(changed('./docs/files/'))
-		.pipe(gulp.dest('./docs/files/'))
+		.src(paths.files.src)
+		.pipe(changed(paths.files.docs))
+		.pipe(gulp.dest(paths.files.docs))
 })
 
+// js
 gulp.task('js:docs', function() {
 	return gulp
-		.src('./src/js/**/*.js')
-		.pipe(changed('./docs/js/'))
+		.src(paths.js.src)
+		.pipe(changed(paths.js.docs))
 		.pipe(
 			plumber(
 				notify.onError({
@@ -218,20 +250,19 @@ gulp.task('js:docs', function() {
 		.pipe(webpack(require('./../webpack.config.js')))
 		.pipe(concat('app.js'))
 		.pipe(uglify())
-		.pipe(gulp.dest('./docs/js/'))
+		.pipe(gulp.dest(paths.js.docs))
 })
 
+// videos
 gulp.task('videos:docs', function() {
 	return new Promise((resolve, reject) => {
-		if (!fs.existsSync('./build/assets/videos/')) {
-			fs.mkdirSync('./build/assets/videos/', { recursive: true })
+		if (!fs.existsSync(paths.videos.docs)) {
+			fs.mkdirSync(paths.videos.docs, { recursive: true })
 		}
-
 		const tasks = []
-
 		gulp
-			.src('./src/assets/videos/*.*')
-			.pipe(gulp.dest('./build/assets/videos/'))
+			.src(paths.videos.src)
+			.pipe(gulp.dest(paths.videos.docs))
 			.on('end', () => {
 				Promise.all(tasks)
 					.then(resolve)
@@ -246,5 +277,5 @@ const serverOptions = {
 }
 
 gulp.task('server:docs', function() {
-	return gulp.src('./docs/').pipe(server(serverOptions))
+	return gulp.src(paths.docs).pipe(server(serverOptions))
 })

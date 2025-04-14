@@ -79,7 +79,7 @@ gulp.task('pug:docs', function () {
 		.pipe(pug({ locals: mergedContent, pretty: true }))
 		.pipe(
 			replace(
-				/(?<=src=|href=|srcset=)(['"])(\.(\.)?\/)*(img|images|fonts|css|scss|sass|js|files|audio|video)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
+				/(?<=src=|href=|srcset=)(['"])(\.(\.)?\/)*(img|images|fonts|css|scss|sass|js|files|audio|videos)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
 				'$1./$4$5$7$1'
 			)
 		)
@@ -109,7 +109,7 @@ gulp.task('sass:docs', function () {
 		.pipe(groupMedia())
 		.pipe(
 			replace(
-				/(['"]?)(\.\.\/)+(img|images|fonts|css|scss|sass|js|files|audio|video)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
+				/(['"]?)(\.\.\/)+(img|images|fonts|css|scss|sass|js|files|audio|videos)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
 				'$1$2$3$4$6$1'
 			)
 		)
@@ -244,36 +244,17 @@ gulp.task('js:docs', function () {
 		.pipe(gulp.dest('./docs/js/'))
 })
 
-gulp.task('video:docs', function () {
+gulp.task('videos:dev', function () {
 	return new Promise((resolve, reject) => {
-		if (!fs.existsSync('./build/assets/video/')) {
-			fs.mkdirSync('./build/assets/video/', { recursive: true })
+		if (!fs.existsSync('./build/assets/videos/')) {
+			fs.mkdirSync('./build/assets/videos/', { recursive: true })
 		}
+
 		const tasks = []
 
 		gulp
-			.src('./src/assets/video/*.mp4')
-			.on('data', file => {
-				const output = path.join(
-					'./build/assets/video/',
-					path.basename(file.path)
-				)
-
-				const task = new Promise((res, rej) => {
-					ffmpeg(file.path)
-						.videoCodec('libx264')
-						.outputOptions('-crf', '23')
-						.save(output)
-						.on('end', () => {
-							res()
-						})
-						.on('error', err => {
-							rej(err)
-						})
-				})
-
-				tasks.push(task)
-			})
+			.src('./src/assets/videos/*.*')
+			.pipe(gulp.dest('./build/assets/videos/'))
 			.on('end', () => {
 				Promise.all(tasks).then(resolve).catch(reject)
 			})

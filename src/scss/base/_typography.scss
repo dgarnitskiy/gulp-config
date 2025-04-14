@@ -1,52 +1,54 @@
 :root {
-	--title-size-sm: 16px;
+	// title sizes
+	--title-size-sm: 10px;
 	--title-size-md: 20px;
-	--title-size-lg: 28px;
+	--title-size-lg: 30px;
 
 	@include desktop() {
-		--title-size-sm: 16px;
-		--title-size-md: 20px;
-		--title-size-lg: 42px;
-	}
-
-	@include ultrahd() {
 		--title-size-sm: 20px;
-		--title-size-md: 28px;
-		--title-size-lg: 60px;
-	}
-
-	--text-size-sm: 12px;
-	--text-size-md: 14px;
-	--text-size-lg: 16px;
-
-	@include desktop() {
-		--text-size-sm: 14px;
-		--text-size-md: 14px;
-		--text-size-lg: 18px;
+		--title-size-md: 30px;
+		--title-size-lg: 40px;
 	}
 
 	@include ultrahd() {
-		--text-size-sm: 14px;
-		--text-size-md: 18px;
-		--text-size-lg: 18px;
+		--title-size-sm: 30px;
+		--title-size-md: 40px;
+		--title-size-lg: 50px;
 	}
 
+	// text sizes
+	--text-size-sm: 10px;
+	--text-size-md: 20px;
+	--text-size-lg: 30px;
+
+	@include desktop() {
+		--text-size-sm: 20px;
+		--text-size-md: 30px;
+		--text-size-lg: 40px;
+	}
+
+	@include ultrahd() {
+		--text-size-sm: 30px;
+		--text-size-md: 40px;
+		--text-size-lg: 50px;
+	}
+
+	// line height
+	--text-line-height-sm: 100%;
 	--text-line-height-md: 135%;
 	--text-line-height-lg: 150%;
 
+	// letter spacing
 	--letter-spacing: 0.02em;
-	--letter-spacing-accent: -0.01em;
+	--letter-spacing-accent: 0;
 }
 
+// title styles
 .title {
-	font-family: var(--font-secondary), sans-serif;
-	line-height: var(--text-line-height-md);
-	color: var(--title-color);
 	font-weight: 500;
-	letter-spacing: 0;
+	line-height: var(--text-line-height-md);
 
 	&_sm {
-		font-family: var(--font-main);
 		font-size: var(--title-size-sm);
 	}
 
@@ -56,26 +58,18 @@
 
 	&_lg {
 		font-size: var(--title-size-lg);
-		letter-spacing: var(--letter-spacing);
 	}
 }
 
+// text styles
 .text {
-	font-family: var(--font-main);
-	font-weight: 500;
 	line-height: var(--text-line-height-md);
 	&_sm {
 		font-size: var(--text-size-sm);
-		letter-spacing: var(--letter-spacing-accent);
-		color: var(--primary-color);
 	}
 
 	&_md {
-		line-height: var(--text-line-height-lg);
 		font-size: var(--text-size-md);
-		@include ultrahd {
-			font-weight: 400;
-		}
 	}
 
 	&_lg {

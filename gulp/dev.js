@@ -76,7 +76,7 @@ gulp.task('pug:dev', function () {
 		)
 		.pipe(
 			replace(
-				/(?<=src=|href=|srcset=)(['"])(\.(\.)?\/)*(img|images|fonts|css|scss|sass|js|files|audio|video)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
+				/(?<=src=|href=|srcset=)(['"])(\.(\.)?\/)*(img|images|fonts|css|scss|sass|js|files|audio|videos)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
 				'$1./$4$5$7$1'
 			) // Заменяем относительные пути
 		)
@@ -113,7 +113,7 @@ gulp.task('sass:dev', function () {
 		.pipe(sass())
 		.pipe(
 			replace(
-				/(['"]?)(\.\.\/)+(img|images|fonts|css|scss|sass|js|files|audio|video)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
+				/(['"]?)(\.\.\/)+(img|images|fonts|css|scss|sass|js|files|audio|videos)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
 				'$1$2$3$4$6$1'
 			)
 		)
@@ -123,7 +123,7 @@ gulp.task('sass:dev', function () {
 
 gulp.task('images:dev', function () {
 	return gulp
-		.src(['./src/assets/images/**/*', '!./src/assets/images/svgicons/**/*'])
+		.src(['./src/assets/images/**/*', '!./src/assets/images/icons/**/*'])
 		.pipe(changed('./build/assets/images/'))
 		.pipe(gulp.dest('./build/assets/images/'))
 })
@@ -173,7 +173,7 @@ const svgSymbol = {
 
 gulp.task('svgStack:dev', function () {
 	return gulp
-		.src('./src/assets/images/svgicons/**/*.svg')
+		.src('./src/assets/images/icons/**/*.svg')
 		.pipe(plumber(plumberNotify('SVG:dev')))
 		.pipe(svgsprite(svgStack))
 		.pipe(gulp.dest('./build/assets/images/svgsprite/'))
@@ -181,7 +181,7 @@ gulp.task('svgStack:dev', function () {
 
 gulp.task('svgSymbol:dev', function () {
 	return gulp
-		.src('./src/assets/images/svgicons/**/*.svg')
+		.src('./src/assets/images/icons/**/*.svg')
 		.pipe(plumber(plumberNotify('SVG:dev')))
 		.pipe(svgsprite(svgSymbol))
 		.pipe(gulp.dest('./build/assets/images/svgsprite/'))
@@ -227,39 +227,17 @@ gulp.task('js:dev', function () {
 		.pipe(gulp.dest('./build/js/'))
 })
 
-gulp.task('video:dev', function () {
+gulp.task('videos:dev', function () {
 	return new Promise((resolve, reject) => {
-		if (!fs.existsSync('./build/assets/video/')) {
-			fs.mkdirSync('./build/assets/video/', { recursive: true })
+		if (!fs.existsSync('./build/assets/videos/')) {
+			fs.mkdirSync('./build/assets/videos/', { recursive: true })
 		}
 
 		const tasks = []
 
 		gulp
-			.src('./src/assets/video/*.*')
-			.pipe(gulp.dest('./build/assets/video/'))
-			// .on('data', file => {
-			// 	const output = path.join(
-			// 		'./build/assets/video/',
-			// 		path.basename(file.path)
-			// 	)
-			// 	console.log(output)
-			//
-			// 	const task = new Promise((res, rej) => {
-			// 		ffmpeg(file.path)
-			// 			.videoCodec('libx264')
-			// 			.outputOptions('-crf', '23')
-			// 			.save(output)
-			// 			.on('end', () => {
-			// 				res()
-			// 			})
-			// 			.on('error', err => {
-			// 				rej(err)
-			// 			})
-			// 	})
-			//
-			// 	tasks.push(task)
-			// })
+			.src('./src/assets/videos/*.*')
+			.pipe(gulp.dest('./build/assets/videos/'))
 			.on('end', () => {
 				Promise.all(tasks).then(resolve).catch(reject)
 			})
@@ -282,12 +260,12 @@ gulp.task('watch:dev', function () {
 		gulp.parallel('pug:dev')
 	)
 	gulp.watch('./src/assets/images/**/*', gulp.parallel('images:dev'))
-	gulp.watch('./src/assets/video/**/*', gulp.parallel('video:dev'))
+	gulp.watch('./src/assets/videos/**/*', gulp.parallel('videos:dev'))
 	gulp.watch('./src/files/**/*', gulp.parallel('files:dev'))
 	gulp.watch('./src/js/**/*.js', gulp.parallel('js:dev'))
 	gulp.watch('./src/assets/fonts/**/*.{ttf,otf}', gulp.parallel('fonts:dev'))
 	gulp.watch(
-		'./src/assets/images/svgicons/*',
+		'./src/assets/images/icons/*',
 		gulp.series('svgStack:dev', 'svgSymbol:dev')
 	)
 })

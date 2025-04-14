@@ -20,7 +20,7 @@ const prettier = require('@bdchauvette/gulp-prettier')
 const ffmpeg = require('fluent-ffmpeg')
 const path = require('path')
 
-gulp.task('clean:dev', function (done) {
+gulp.task('clean:dev', function(done) {
 	if (fs.existsSync('./build/')) {
 		return gulp.src('./build/', { read: false }).pipe(clean({ force: true }))
 	}
@@ -38,14 +38,7 @@ const plumberNotify = title => {
 }
 
 // Пути для исходных и выходных файлов
-const pugSrc = [
-	'./src/pug/**/*.pug',
-	'!./**/blocks/**/*.*',
-	'!./src/pug/docs/**/*.*',
-	'!./src/pug/components/**/*.*',
-	'!./src/pug/base/**/*.*',
-	'!./src/layout.html',
-] // Путь к Pug файлам
+const pugSrc = ['./src/pug/pages/*.pug'] // Путь к Pug файлам
 const pugDest = './build/' // Папка для вывода HTML
 
 function mergeAllJSON(dir) {
@@ -62,7 +55,7 @@ function mergeAllJSON(dir) {
 	return mergedData
 }
 
-gulp.task('pug:dev', function () {
+gulp.task('pug:dev', function() {
 	const mergedContent = mergeAllJSON('./src/contents')
 	return gulp
 		.src(pugSrc) // Игнорируем блоки и папку docs
@@ -103,7 +96,7 @@ gulp.task('pug:dev', function () {
 		.pipe(gulp.dest(pugDest)) // Выводим скомпилированные HTML в build/
 })
 
-gulp.task('sass:dev', function () {
+gulp.task('sass:dev', function() {
 	return gulp
 		.src('./src/scss/*.scss')
 		.pipe(changed('./build/css/'))
@@ -121,7 +114,7 @@ gulp.task('sass:dev', function () {
 		.pipe(gulp.dest('./build/css/'))
 })
 
-gulp.task('images:dev', function () {
+gulp.task('images:dev', function() {
 	return gulp
 		.src(['./src/assets/images/**/*', '!./src/assets/images/icons/**/*'])
 		.pipe(changed('./build/assets/images/'))
@@ -132,31 +125,14 @@ gulp.task('images:dev', function () {
 const fontsSrc = 'src/assets/fonts/**/*.{ttf,otf,woff,woff2}'
 const fontsDest = './build/assets/fonts/'
 
-gulp.task('fonts:dev', function () {
+gulp.task('fonts:dev', function() {
 	return gulp.src(fontsSrc).pipe(gulp.dest(fontsDest))
 })
-
-const svgStack = {
-	mode: {
-		stack: {
-			example: true,
-		},
-	},
-	shape: {
-		transform: [
-			{
-				svgo: {
-					js2svg: { indent: 4, pretty: true },
-				},
-			},
-		],
-	},
-}
 
 const svgSymbol = {
 	mode: {
 		symbol: {
-			sprite: '../sprite.symbol.svg',
+			sprite: '../sprite.svg',
 		},
 	},
 	shape: {
@@ -171,43 +147,24 @@ const svgSymbol = {
 	},
 }
 
-gulp.task('svgStack:dev', function () {
+gulp.task('svgSymbol:dev', function() {
 	return gulp
 		.src('./src/assets/images/icons/**/*.svg')
-		.pipe(plumber(plumberNotify('SVG:dev')))
-		.pipe(svgsprite(svgStack))
-		.pipe(gulp.dest('./build/assets/images/svgsprite/'))
-})
-
-gulp.task('svgSymbol:dev', function () {
-	return gulp
-		.src('./src/assets/images/icons/**/*.svg')
-		.pipe(plumber(plumberNotify('SVG:dev')))
+		.pipe(plumber(plumberNotify('SVG')))
 		.pipe(svgsprite(svgSymbol))
-		.pipe(gulp.dest('./build/assets/images/svgsprite/'))
+		.pipe(gulp.dest('./build/assets/images/'))
 })
 
-gulp.task('files:dev', function () {
+gulp.task('files:dev', function() {
 	return gulp
 		.src('./src/files/**/*')
 		.pipe(changed('./build/files/'))
 		.pipe(gulp.dest('./build/files/'))
 })
 
-gulp.task('js:dev', function () {
-	return (
-		gulp
-			.src('./src/js/*.js')
-			.pipe(changed('./build/js/'))
-			.pipe(plumber(plumberNotify('JS')))
-			// .pipe(babel())
-			.pipe(webpack(require('./../webpack.config.js')))
-			.pipe(gulp.dest('./build/js/'))
-	)
-})
-gulp.task('js:dev', function () {
+gulp.task('js:dev', function() {
 	return gulp
-		.src('./src/js/*.js')
+		.src('./src/js/**/*.js')
 		.pipe(changed('./build/js/'))
 		.pipe(
 			plumber(
@@ -227,7 +184,7 @@ gulp.task('js:dev', function () {
 		.pipe(gulp.dest('./build/js/'))
 })
 
-gulp.task('videos:dev', function () {
+gulp.task('videos:dev', function() {
 	return new Promise((resolve, reject) => {
 		if (!fs.existsSync('./build/assets/videos/')) {
 			fs.mkdirSync('./build/assets/videos/', { recursive: true })
@@ -239,7 +196,9 @@ gulp.task('videos:dev', function () {
 			.src('./src/assets/videos/*.*')
 			.pipe(gulp.dest('./build/assets/videos/'))
 			.on('end', () => {
-				Promise.all(tasks).then(resolve).catch(reject)
+				Promise.all(tasks)
+					.then(resolve)
+					.catch(reject)
 			})
 	})
 })
@@ -249,23 +208,23 @@ const serverOptions = {
 	open: true,
 }
 
-gulp.task('server:dev', function () {
+gulp.task('server:dev', function() {
 	return gulp.src('./build/').pipe(server(serverOptions))
 })
 
-gulp.task('watch:dev', function () {
+gulp.task('watch:dev', function() {
 	gulp.watch('./src/scss/**/*.scss', gulp.parallel('sass:dev'))
 	gulp.watch(
-		['./src/pug/**/*.pug', './src/pug/**/*.json'],
+		['./src/pug/**/*.pug', './src/**/*.json'],
 		gulp.parallel('pug:dev')
 	)
 	gulp.watch('./src/assets/images/**/*', gulp.parallel('images:dev'))
 	gulp.watch('./src/assets/videos/**/*', gulp.parallel('videos:dev'))
 	gulp.watch('./src/files/**/*', gulp.parallel('files:dev'))
 	gulp.watch('./src/js/**/*.js', gulp.parallel('js:dev'))
-	gulp.watch('./src/assets/fonts/**/*.{ttf,otf}', gulp.parallel('fonts:dev'))
 	gulp.watch(
-		'./src/assets/images/icons/*',
-		gulp.series('svgStack:dev', 'svgSymbol:dev')
+		'./src/assets/fonts/**/*.{ttf,otf, woff, woff2}',
+		gulp.parallel('fonts:dev')
 	)
+	gulp.watch('./src/assets/images/icons/*', gulp.series('svgSymbol:dev'))
 })

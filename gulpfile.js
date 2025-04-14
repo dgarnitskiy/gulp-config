@@ -14,7 +14,7 @@ gulp.task(
 			'images:dev',
 			'videos:dev',
 			'fonts:dev',
-			gulp.series('svgStack:dev', 'svgSymbol:dev'),
+			'svgSymbol:dev',
 			'files:dev',
 			'js:dev'
 		),
@@ -33,7 +33,7 @@ gulp.task(
 			// 'imagesTinypng',
 			'videos:docs',
 			'fonts:docs',
-			gulp.series('svgStack:docs', 'svgSymbol:docs'),
+			'svgSymbol:docs',
 			'files:docs',
 			'js:docs'
 		),

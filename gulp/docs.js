@@ -27,11 +27,12 @@ const uglify = require('gulp-uglify')
 const concat = require('gulp-concat')
 const changed = require('gulp-changed')
 const tinypng = require('gulp-tinypng-compress')
+const ffmpeg = require('fluent-ffmpeg')
 
 // SVG
 const svgsprite = require('gulp-svg-sprite')
 
-gulp.task('clean:docs', function(done) {
+gulp.task('clean:docs', function (done) {
 	if (fs.existsSync('./docs/')) {
 		return gulp.src('./docs/', { read: false }).pipe(clean({ force: true }))
 	}
@@ -48,16 +49,34 @@ const plumberNotify = title => {
 	}
 }
 
-gulp.task('pug:docs', function() {
+function mergeAllJSON(dir) {
+	const files = fs.readdirSync(dir).filter(file => file.endsWith('.json'))
+
+	let mergedData = {}
+
+	files.forEach(file => {
+		const filePath = `${dir}/${file}`
+		const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+		mergedData = { ...mergedData, ...jsonData }
+	})
+
+	return mergedData
+}
+
+gulp.task('pug:docs', function () {
+	const mergedContent = mergeAllJSON('./src/contents')
 	return gulp
 		.src([
 			'./src/pug/**/*.pug',
 			'!./**/blocks/**/*.*',
 			'!./src/pug/docs/**/*.*',
+			'!./src/pug/components/**/*.*',
+			'!./src/pug/base/**/*.*',
+			'!./src/layout.html',
 		])
 		.pipe(changed('./docs/'))
 		.pipe(plumber(plumberNotify('Pug')))
-		.pipe(pug({ pretty: true }))
+		.pipe(pug({ locals: mergedContent, pretty: true }))
 		.pipe(
 			replace(
 				/(?<=src=|href=|srcset=)(['"])(\.(\.)?\/)*(img|images|fonts|css|scss|sass|js|files|audio|video)(\/[^\/'"]+(\/))?([^'"]*)\1/gi,
@@ -78,7 +97,7 @@ gulp.task('pug:docs', function() {
 		.pipe(gulp.dest('./docs/'))
 })
 
-gulp.task('sass:docs', function() {
+gulp.task('sass:docs', function () {
 	return gulp
 		.src('./src/scss/*.scss')
 		.pipe(changed('./docs/css/'))
@@ -99,11 +118,11 @@ gulp.task('sass:docs', function() {
 		.pipe(gulp.dest('./docs/css/'))
 })
 
-gulp.task('imagesSquoosh', function() {
+gulp.task('imagesSquoosh', function () {
 	return gulp
 		.src('src/assets/images/**/*.{jpg,png,gif,webp}')
 		.pipe(gulp.dest('temp/images'))
-		.on('end', function() {
+		.on('end', function () {
 			// Применяем сжатие к каждому изображению с помощью Squoosh
 			gulp
 				.src('temp/images/**/*.{jpg,png,gif,webp}')
@@ -131,7 +150,7 @@ gulp.task('imagesSquoosh', function() {
 // 		.src('./src/assets/images/**/*.{png,jpg,jpeg}')
 // 		.pipe(
 // 			tinypng({
-// 				key: 'flNSz6gHtRl0ffXnPH1MTWNkjgnB83tN', // Замените на ваш ключ API от TinyPNG
+// 				key: '', // Замените на ваш ключ API от TinyPNG
 // 				parallel: true,
 // 				parallelMax: 5, // Максимальное количество параллельных запросов
 // 			})
@@ -143,7 +162,7 @@ gulp.task('imagesSquoosh', function() {
 const fontsSrc = './src/assets/fonts/**/*.{ttf,otf,woff,woff2}'
 const fontsDest = './docs/assets/fonts'
 
-gulp.task('fonts:docs', function() {
+gulp.task('fonts:docs', function () {
 	return gulp.src(fontsSrc).pipe(gulp.dest(fontsDest))
 })
 
@@ -179,7 +198,7 @@ const svgSymbol = {
 	},
 }
 
-gulp.task('svgStack:docs', function() {
+gulp.task('svgStack:docs', function () {
 	return gulp
 		.src('./src/assets/images/svgicons/**/*.svg')
 		.pipe(plumber(plumberNotify('SVG:dev')))
@@ -187,7 +206,7 @@ gulp.task('svgStack:docs', function() {
 		.pipe(gulp.dest('./docs/assets/images/svgsprite/'))
 })
 
-gulp.task('svgSymbol:docs', function() {
+gulp.task('svgSymbol:docs', function () {
 	return gulp
 		.src('./src/assets/images/svgicons/**/*.svg')
 		.pipe(plumber(plumberNotify('SVG:dev')))
@@ -195,14 +214,14 @@ gulp.task('svgSymbol:docs', function() {
 		.pipe(gulp.dest('./docs/assets/images/svgsprite/'))
 })
 
-gulp.task('files:docs', function() {
+gulp.task('files:docs', function () {
 	return gulp
 		.src('./src/files/**/*')
 		.pipe(changed('./docs/files/'))
 		.pipe(gulp.dest('./docs/files/'))
 })
 
-gulp.task('js:docs', function() {
+gulp.task('js:docs', function () {
 	return gulp
 		.src('./src/js/*.js')
 		.pipe(changed('./docs/js/'))
@@ -225,11 +244,47 @@ gulp.task('js:docs', function() {
 		.pipe(gulp.dest('./docs/js/'))
 })
 
+gulp.task('video:docs', function () {
+	return new Promise((resolve, reject) => {
+		if (!fs.existsSync('./build/assets/video/')) {
+			fs.mkdirSync('./build/assets/video/', { recursive: true })
+		}
+		const tasks = []
+
+		gulp
+			.src('./src/assets/video/*.mp4')
+			.on('data', file => {
+				const output = path.join(
+					'./build/assets/video/',
+					path.basename(file.path)
+				)
+
+				const task = new Promise((res, rej) => {
+					ffmpeg(file.path)
+						.videoCodec('libx264')
+						.outputOptions('-crf', '23')
+						.save(output)
+						.on('end', () => {
+							res()
+						})
+						.on('error', err => {
+							rej(err)
+						})
+				})
+
+				tasks.push(task)
+			})
+			.on('end', () => {
+				Promise.all(tasks).then(resolve).catch(reject)
+			})
+	})
+})
+
 const serverOptions = {
 	livereload: true,
 	open: true,
 }
 
-gulp.task('server:docs', function() {
+gulp.task('server:docs', function () {
 	return gulp.src('./docs/').pipe(server(serverOptions))
 })

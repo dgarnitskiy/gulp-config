@@ -4,14 +4,14 @@
 	}
 }
 
-@mixin tablet() {
-	@media (max-width: 1220px) {
+@mixin ultrahd() {
+	@media (min-width: 1440px) {
 		@content;
 	}
 }
 
-@mixin mobile() {
-	@media (max-width: 820px) {
+@mixin desktop() {
+	@media (min-width: 1024px) {
 		@content;
 	}
 }

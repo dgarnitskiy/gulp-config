@@ -1,0 +1,19 @@
+- const createButtonClasses = function(btn = {}) {
+-  const { broad, icon, text, className, disabled, dataModal} = btn
+-  const classes = ['btn']
+-  if (className) classes.push(className)
+-  if (broad) classes.push(`btn_broad`)
+-  if (disabled) classes.push(`btn_disabled`)
+-  if (dataModal) classes.push(`js-modal-${isCloser ? 'closer' : 'opener'}`)
+-  return classes.join(' ')
+- }
+
+mixin button(btn = {})
+  a(class=createButtonClasses(btn) href=(btn.href || '#') data-modal=(btn.dataModal) data-form-anchor)
+    if btn.icon && btn.text
+      span.text.text_lg #{btn.text}
+      span.btn__icon
+        +svgIcon(btn.icon)
+    else if btn.text
+      span.text.text_lg #{btn.text}
+

@@ -1,22 +1,37 @@
 :root {
-	--container-width: 1200px;
-	--container-padding: 15px;
+	--container-padding: 20px;
 
-	--font-main: sans-serif;
-	--font-accent: 'Manrope', sans-serif;
-	--font-titles: var(--font-accent);
+	--font-main: 'Inter', sans-serif;
+	--font-secondary: 'Rubik', sans-serif;
 
-	--page-bg: #fff;
-	--text-color: #000;
-	--accent: #ac182c;
-	--link-color: #2578c8;
+	--page-bg: #130b1a;
+	--primary-bg: #222230;
+	--accent-bg: rgba(139, 133, 133, 0.2);
+	--secondary-bg: rgba(139, 133, 133, 0.24);
 
-	--laptop-size: 1199px;
-	--tablet-size: 959px;
-	--mobile-size: 599px;
-}
+	--main-color: #96969f;
+	--primary-color: #ffffff;
+	--accent-color: #ac08fe;
+	--secondary-color: #5f5f87;
 
-.dark {
-	--page-bg: #252526;
-	--text-color: #fff;
+	--title-color: #f2f2f2;
+	--graphic-main: #5f8e16;
+	--graphic-primary: #9a04cc;
+	--graphic-accent: #2717d2;
+
+	@include desktop {
+		--container-padding: 40px;
+	}
+	@include ultrahd {
+		--container-padding: 100px;
+	}
+
+	--space-sm: 16px;
+	--space-md: 24px;
+	--space-lg: 32px;
+	--space-xl: 40px;
+
+	--space-section-sm: 100px;
+	--space-section-md: 200px;
+	--space-section-lg: 250px;
 }

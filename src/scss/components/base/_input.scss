@@ -1,0 +1,38 @@
+.input {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	height: auto;
+
+	input {
+		-webkit-appearance: none;
+		appearance: none;
+		border: none;
+		outline: none;
+		border-radius: 32px;
+		width: 100%;
+		flex: 0 0 100%;
+		background: var(--primary-color);
+		color: var(--page-bg);
+		padding: 14px 28px;
+		border: 3px solid currentColor;
+		transition: border 0.2s ease-in-out;
+		@include desktop {
+			padding: 18px 32px;
+		}
+
+		&::placeholder {
+			color: var(--page-bg);
+		}
+		&:hover,
+		&:active,
+		&:focus {
+			border: 3px solid var(--accent-color);
+		}
+		&:not(:placeholder-shown) {
+			border: 3px solid var(--graphic-main);
+		}
+	}
+}

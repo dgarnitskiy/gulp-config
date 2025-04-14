@@ -1,13 +1,21 @@
 html {
 	scroll-behavior: smooth;
-	background-color: rgb(39, 39, 39);
+	background-color: var(--page-bg);
 }
 
 body {
 	background-color: var(--page-bg);
-	color: var(--text-color);
+	color: var(--main-color);
 	font-family: var(--font-main);
 	text-wrap: balance;
+
+	//overflow: hidden;
+	//height: 100vh;
+
+	&.loaded {
+		overflow: unset;
+		height: auto;
+	}
 }
 
 img {
@@ -29,4 +37,11 @@ pre.code {
 	background-color: #e9f1f6;
 	padding: 1rem;
 	border-radius: 4px;
+}
+.container {
+	margin: 0 auto;
+	padding: 0 var(--container-padding);
+
+	max-width: calc(1720px + 2 * var(--container-padding));
+	width: 100%;
 }

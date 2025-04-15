@@ -18,6 +18,7 @@ const svgsprite = require('gulp-svg-sprite')
 const replace = require('gulp-replace')
 const prettier = require('@bdchauvette/gulp-prettier')
 const squoosh = require('gulp-squoosh')
+const { log } = require('console')
 
 const paths = {
 	pug: {
@@ -167,21 +168,52 @@ gulp.task('sass:dev', function() {
 })
 
 // images
-gulp.task('images:dev', function() {
+function webp1x() {
 	return gulp
 		.src(paths.images.src)
 		.pipe(changed(paths.images.build))
 		.pipe(
-			squoosh(({ width, filePath }) => ({
+			squoosh({
 				encodeOptions: {
 					webp: { quality: 75 },
 				},
-			}))
+			})
 		)
 		.pipe(gulp.dest(paths.images.build))
-})
+}
+function webp2x() {
+	return gulp
+		.src(paths.images.src)
+		.pipe(changed(paths.images.build))
+		.pipe(
+			squoosh(({ image }) => {
+				const originalWidth = image.width || undefined
+				const originalHeight = image.height || undefined
 
-// Пути к файлам
+				return {
+					preprocessOptions: {
+						resize: {
+							width: originalWidth ? originalWidth * 2 : undefined,
+							height: originalHeight ? originalHeight * 2 : undefined,
+						},
+					},
+					encodeOptions: {
+						webp: { quality: 90 },
+					},
+				}
+			})
+		)
+		.pipe(
+			rename(path => {
+				console.log('i am here')
+				path.basename += '@2x'
+			})
+		)
+		.pipe(gulp.dest(paths.images.build))
+}
+
+// images task
+gulp.task('images:dev', gulp.parallel(webp1x, webp2x))
 
 // fonts
 gulp.task('fonts:dev', function() {

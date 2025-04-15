@@ -25,7 +25,13 @@ const paths = {
 		pages: './src/pug/pages/*.pug',
 	},
 	images: {
-		src: ['./src/assets/images/**/*', '!./src/assets/images/icons/**/*'],
+		src: ['./src/assets/images/svg/**/*', './src/assets/images/favicons/**/*'],
+		webp: [
+			'./src/assets/images/**/*.{jpeg,png,webp,jpg}',
+			'!./src/assets/images/icons/',
+			'!./src/assets/images/svg/',
+			'!./src/assets/images/favicons/',
+		],
 		build: './build/assets/images/',
 		docs: './docs/assets/images/',
 	},
@@ -65,7 +71,7 @@ const paths = {
 
 const watchPaths = {
 	pug: './src/pug/**/*.pug',
-	images: ['./src/assets/images/**/*', '!./src/assets/images/icons/**/*'],
+	images: ['./src/assets/images/**/*', '!./src/assets/images/icons/'],
 	scss: './src/scss/**/*.scss',
 	fonts: './src/assets/fonts/**/*.{ttf,otf, woff, woff2}',
 	svg: './src/assets/images/icons/**/*',
@@ -168,14 +174,20 @@ gulp.task('sass:dev', function() {
 })
 
 // images
-function webp1x() {
+function skipImages() {
 	return gulp
 		.src(paths.images.src)
+		.pipe(changed(paths.images.build))
+		.pipe(gulp.dest(paths.images.build))
+}
+function webp1x() {
+	return gulp
+		.src(paths.images.webp)
 		.pipe(changed(paths.images.build))
 		.pipe(
 			squoosh({
 				encodeOptions: {
-					webp: { quality: 75 },
+					webp: { quality: 80 },
 				},
 			})
 		)
@@ -183,12 +195,12 @@ function webp1x() {
 }
 function webp2x() {
 	return gulp
-		.src(paths.images.src)
+		.src(paths.images.webp)
 		.pipe(changed(paths.images.build))
 		.pipe(
-			squoosh(({ image }) => {
-				const originalWidth = image.width || undefined
-				const originalHeight = image.height || undefined
+			squoosh(({ width, height }) => {
+				const originalWidth = width || undefined
+				const originalHeight = height || undefined
 
 				return {
 					preprocessOptions: {
@@ -205,7 +217,6 @@ function webp2x() {
 		)
 		.pipe(
 			rename(path => {
-				console.log('i am here')
 				path.basename += '@2x'
 			})
 		)
@@ -213,7 +224,7 @@ function webp2x() {
 }
 
 // images task
-gulp.task('images:dev', gulp.parallel(webp1x, webp2x))
+gulp.task('images:dev', gulp.parallel(skipImages, webp1x, webp2x))
 
 // fonts
 gulp.task('fonts:dev', function() {

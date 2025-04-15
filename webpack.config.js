@@ -1,7 +1,7 @@
-const config = {
+export default {
 	mode: 'production',
 	entry: {
-		index: './src/js/index.js'
+		index: './src/js/index.js',
 	},
 	output: {
 		filename: '[name].bundle.js',
@@ -14,6 +14,4 @@ const config = {
 			},
 		],
 	},
-};
-
-module.exports = config;
+}

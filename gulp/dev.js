@@ -151,7 +151,7 @@ gulp.task('pug:dev', function() {
 			})
 		)
 		.pipe(rename({ dirname: '' }))
-		.pipe(gulp.dest(paths.build)) // Выводим скомпилированные HTML в build/
+		.pipe(gulp.dest(paths.build))
 })
 
 // sass
@@ -223,7 +223,6 @@ function webp2x() {
 		.pipe(gulp.dest(paths.images.build))
 }
 
-// images task
 gulp.task('images:dev', gulp.parallel(skipImages, webp1x, webp2x))
 
 // fonts

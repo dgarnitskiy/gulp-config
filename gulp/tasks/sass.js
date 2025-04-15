@@ -1,5 +1,5 @@
 import { isDocs } from '../config/mode.js'
-import paths from '../config/paths.js'
+import getPaths from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import gulp from 'gulp'
@@ -12,11 +12,12 @@ import replace from 'gulp-replace'
 import gulpSass from 'gulp-sass'
 import sassGlob from 'gulp-sass-glob'
 import sourceMaps from 'gulp-sourcemaps'
-import dartSass from 'sass'
+import * as dartSass from 'sass'
 
 const sass = gulpSass(dartSass)
 
 function sassTask() {
+	const paths = getPaths()
 	const sassSetting = gulp
 		.src(paths.scss.src)
 		.pipe(changed(paths.scss.dest))

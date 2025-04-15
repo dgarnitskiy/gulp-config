@@ -1,5 +1,5 @@
 import { isDocs } from '../config/mode.js'
-import paths from '../config/paths.js'
+import getPaths from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import gulp from 'gulp'
@@ -12,6 +12,7 @@ import webpack from 'webpack-stream'
 import webpackConfig from './../../webpack.config.js'
 
 function jsTask() {
+	const paths = getPaths()
 	const jsSetting = gulp
 		.src(paths.js.src)
 		.pipe(changed(paths.js.dest))

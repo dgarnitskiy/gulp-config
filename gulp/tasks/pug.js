@@ -1,5 +1,5 @@
 import { isDocs } from '../config/mode.js'
-import paths from '../config/paths.js'
+import getPaths from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import prettier from '@bdchauvette/gulp-prettier'
@@ -28,6 +28,7 @@ function mergeAllJSON(dir) {
 }
 
 function pugTask() {
+	const paths = getPaths()
 	const mergedContent = mergeAllJSON(paths.json)
 	const pugSetting = gulp
 		.src(paths.pug.pages)

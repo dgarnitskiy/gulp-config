@@ -1,4 +1,4 @@
-let currentMode = 'dev'
+let currentMode
 
 function setMode(mode) {
 	currentMode = mode

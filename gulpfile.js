@@ -1,4 +1,5 @@
 import { setMode } from './gulp/config/mode.js'
+import getPaths from './gulp/config/paths.js'
 import cleanTask from './gulp/tasks/clean.js'
 import filesTask from './gulp/tasks/files.js'
 import fontsTask from './gulp/tasks/fonts.js'
@@ -13,7 +14,17 @@ import watchTask from './gulp/tasks/watch.js'
 
 import gulp from 'gulp'
 
-const build = gulp.parallel(
+function setDocsMode(done) {
+	setMode('docs')
+	// console.log(isDocs())
+	done()
+}
+function setDevMode(done) {
+	setMode('dev')
+	done()
+}
+
+const buildTasks = [
 	pugTask,
 	sassTask,
 	imagesTask,
@@ -21,18 +32,15 @@ const build = gulp.parallel(
 	fontsTask,
 	svgSymbolTask,
 	filesTask,
-	jsTask
-)
+	jsTask,
+]
 
 gulp.task(
 	'default',
 	gulp.series(
 		cleanTask,
-		done => {
-			setMode('dev')
-			done()
-		},
-		build,
+		setDevMode,
+		gulp.parallel(buildTasks),
 		gulp.parallel(serverTask, watchTask)
 	)
 )
@@ -41,11 +49,8 @@ gulp.task(
 	'docs',
 	gulp.series(
 		cleanTask,
-		done => {
-			setMode('docs')
-			done()
-		},
-		build,
+		setDocsMode,
+		gulp.parallel(buildTasks),
 		gulp.parallel(serverTask)
 	)
 )

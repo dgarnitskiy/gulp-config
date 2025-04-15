@@ -1,9 +1,10 @@
-import paths from '../config/paths.js'
+import getPaths from '../config/paths.js'
 
 import fs from 'fs'
 import gulp from 'gulp'
 
 function videosTask() {
+	const paths = getPaths()
 	return new Promise((resolve, reject) => {
 		if (!fs.existsSync(paths.videos.dest)) {
 			fs.mkdirSync(paths.videos.dest, { recursive: true })

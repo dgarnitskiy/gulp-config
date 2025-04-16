@@ -1,5 +1,5 @@
-import { isDocs } from '../config/mode.js'
-import getPaths from '../config/paths.js'
+import Mode from '../config/mode.js'
+import { getPaths } from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import gulp from 'gulp'
@@ -10,6 +10,8 @@ import plumber from 'gulp-plumber'
 import uglify from 'gulp-uglify'
 import webpack from 'webpack-stream'
 import webpackConfig from './../../webpack.config.js'
+
+const { isDocs } = Mode()
 
 function jsTask() {
 	const paths = getPaths()

@@ -1,4 +1,4 @@
-import getPaths from '../config/paths.js'
+import { getPaths } from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import gulp from 'gulp'

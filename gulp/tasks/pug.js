@@ -1,9 +1,8 @@
-import { isDocs } from '../config/mode.js'
-import getPaths from '../config/paths.js'
+import Mode from '../config/mode.js'
+import { getPaths } from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import prettier from '@bdchauvette/gulp-prettier'
-import fs from 'fs'
 import gulp from 'gulp'
 import changed from 'gulp-changed'
 import htmlclean from 'gulp-htmlclean'
@@ -13,30 +12,17 @@ import rename from 'gulp-rename'
 import replace from 'gulp-replace'
 import typograf from 'gulp-typograf'
 
-function mergeAllJSON(dir) {
-	const files = fs.readdirSync(dir).filter(file => file.endsWith('.json'))
+const { isDocs } = Mode()
 
-	let mergedData = {}
-
-	files.forEach(file => {
-		const filePath = `${dir}/${file}`
-		const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'))
-		mergedData = { ...mergedData, ...jsonData }
-	})
-
-	return mergedData
-}
-
-function pugTask() {
+function pugTask(content) {
 	const paths = getPaths()
-	const mergedContent = mergeAllJSON(paths.json)
 	const pugSetting = gulp
 		.src(paths.pug.pages)
 		.pipe(changed(paths.dest, { hasChanged: changed.compareContents })) // Проверка на изменения
 		.pipe(plumber(plumberNotify('Pug'))) // Обработка ошибок
 		.pipe(
 			pug({
-				locals: mergedContent,
+				locals: content,
 				pretty: true, // Форматируем HTML для удобства чтения
 			})
 		)

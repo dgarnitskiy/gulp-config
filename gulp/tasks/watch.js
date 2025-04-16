@@ -1,3 +1,5 @@
+import mergeJSON from '../config/mergeJSON.js'
+import { getPaths, watchPaths } from '../config/paths.js'
 import filesTask from './files.js'
 import fontsTask from './fonts.js'
 import imagesTask from './images.js'
@@ -9,21 +11,24 @@ import videosTask from './videos.js'
 
 import gulp from 'gulp'
 
-const watchPaths = {
-	pug: './src/pug/**/*.pug',
-	images: ['./src/assets/images/**/*', '!./src/assets/images/icons/'],
-	scss: './src/scss/**/*.scss',
-	fonts: './src/assets/fonts/**/*.{ttf,otf, woff, woff2}',
-	svg: './src/assets/images/icons/**/*',
-	files: './src/files/**/*',
-	js: './src/js/**/*.js',
-	videos: './src/assets/videos/**/*',
-	json: './src/contents/**/*.json',
+const paths = getPaths()
+let mergedContent = mergeJSON(paths.json)
+
+function embedJSON() {
+	mergedContent = mergeJSON(paths.json)
+	return mergedContent
 }
 
 function watchTask() {
 	gulp.watch(watchPaths.scss, gulp.parallel(sassTask))
-	gulp.watch([watchPaths.pug, watchPaths.json], gulp.parallel(pugTask))
+	gulp.watch(
+		watchPaths.pug,
+		gulp.parallel(() => pugTask(mergedContent))
+	)
+	gulp.watch(
+		watchPaths.json,
+		gulp.parallel(() => pugTask(embedJSON()))
+	)
 	gulp.watch(watchPaths.images, gulp.parallel(imagesTask))
 	gulp.watch(watchPaths.videos, gulp.parallel(videosTask))
 	gulp.watch(watchPaths.files, gulp.parallel(filesTask))

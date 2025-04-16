@@ -1,11 +1,15 @@
-let currentMode
+function Mode() {
+	let _currentMode = 'dev'
 
-function setMode(mode) {
-	currentMode = mode
+	const setMode = mode => {
+		_currentMode = mode || 'dev'
+	}
+
+	const isDocs = () => {
+		return _currentMode === 'docs'
+	}
+
+	return { isDocs, setMode }
 }
 
-function isDocs() {
-	return currentMode === 'docs'
-}
-
-export { isDocs, setMode }
+export default Mode

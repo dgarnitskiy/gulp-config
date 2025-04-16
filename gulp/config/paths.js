@@ -1,6 +1,20 @@
-import { isDocs } from './mode.js'
+import Mode from './mode.js'
 
-export default function getPaths() {
+const { isDocs } = Mode()
+
+const watchPaths = {
+	pug: './src/pug/**/*.pug',
+	images: ['./src/assets/images/**/*', '!./src/assets/images/icons/'],
+	scss: './src/scss/**/*.scss',
+	fonts: './src/assets/fonts/**/*.{ttf,otf, woff, woff2}',
+	svg: './src/assets/images/icons/**/*',
+	files: './src/files/**/*',
+	js: './src/js/**/*.js',
+	videos: './src/assets/videos/**/*',
+	json: './src/contents/**/*.json',
+}
+
+function getPaths() {
 	const dest = isDocs() ? './docs/' : './build/'
 
 	return {
@@ -48,3 +62,5 @@ export default function getPaths() {
 		dest,
 	}
 }
+
+export { getPaths, watchPaths }

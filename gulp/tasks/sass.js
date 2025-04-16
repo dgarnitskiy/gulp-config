@@ -1,5 +1,5 @@
-import { isDocs } from '../config/mode.js'
-import getPaths from '../config/paths.js'
+import Mode from '../config/mode.js'
+import { getPaths } from '../config/paths.js'
 import plumberNotify from '../config/plumberNotify.js'
 
 import gulp from 'gulp'
@@ -15,6 +15,7 @@ import sourceMaps from 'gulp-sourcemaps'
 import * as dartSass from 'sass'
 
 const sass = gulpSass(dartSass)
+const { isDocs } = Mode()
 
 function sassTask() {
 	const paths = getPaths()

@@ -1,4 +1,4 @@
-import getPaths from '../config/paths.js'
+import { getPaths } from '../config/paths.js'
 
 import gulp from 'gulp'
 import server from 'gulp-server-livereload'

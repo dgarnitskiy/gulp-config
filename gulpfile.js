@@ -1,5 +1,4 @@
-import { setMode } from './gulp/config/mode.js'
-import getPaths from './gulp/config/paths.js'
+import Mode from './gulp/config/mode.js'
 import cleanTask from './gulp/tasks/clean.js'
 import filesTask from './gulp/tasks/files.js'
 import fontsTask from './gulp/tasks/fonts.js'
@@ -14,9 +13,10 @@ import watchTask from './gulp/tasks/watch.js'
 
 import gulp from 'gulp'
 
+const { setMode } = Mode()
+
 function setDocsMode(done) {
 	setMode('docs')
-	// console.log(isDocs())
 	done()
 }
 function setDevMode(done) {

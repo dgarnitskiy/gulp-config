@@ -10,7 +10,7 @@ function imagesTask(done) {
 	const paths = getPaths()
 	function skipImages() {
 		return gulp
-			.src(paths.images.src)
+			.src(paths.images.src, { base: paths.images.base })
 			.pipe(plumber(plumberNotify('Images')))
 			.pipe(changed(paths.images.dest))
 			.pipe(gulp.dest(paths.images.dest))

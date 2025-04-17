@@ -1,4 +1,7 @@
+import gulp from 'gulp'
+import mergeJSON from './gulp/config/mergeJSON.js'
 import Mode from './gulp/config/mode.js'
+import { getPaths } from './gulp/config/paths.js'
 import cleanTask from './gulp/tasks/clean.js'
 import filesTask from './gulp/tasks/files.js'
 import fontsTask from './gulp/tasks/fonts.js'
@@ -11,8 +14,8 @@ import svgSymbolTask from './gulp/tasks/svgSymbol.js'
 import videosTask from './gulp/tasks/videos.js'
 import watchTask from './gulp/tasks/watch.js'
 
-import gulp from 'gulp'
-
+const paths = getPaths()
+let mergedContent = mergeJSON(paths.json)
 const { setMode } = Mode()
 
 function setDocsMode(done) {
@@ -25,7 +28,7 @@ function setDevMode(done) {
 }
 
 const buildTasks = [
-	pugTask,
+	() => pugTask(mergedContent),
 	sassTask,
 	imagesTask,
 	videosTask,

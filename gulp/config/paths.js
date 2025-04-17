@@ -22,16 +22,12 @@ function getPaths() {
 			pages: './src/pug/pages/*.pug',
 		},
 		images: {
+			base: './src/assets/images',
 			src: [
-				'./src/assets/images/svg/**/*',
-				'./src/assets/images/favicons/**/*',
+				'./src/assets/images/svg/**/*.svg',
+				'./src/assets/images/favicons/**/*.ico',
 			],
-			webp: [
-				'./src/assets/images/**/*.{jpeg,png,webp,jpg}',
-				'!./src/assets/images/icons/',
-				'!./src/assets/images/svg/',
-				'!./src/assets/images/favicons/',
-			],
+			webp: './src/assets/images/**/*.{jpeg,png,webp,jpg}',
 			dest: `${dest}assets/images/`,
 		},
 		scss: {

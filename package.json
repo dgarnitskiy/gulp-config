@@ -48,7 +48,6 @@
 		"last 5 versions"
 	],
 	"dependencies": {
-		"@squoosh/lib": "^0.5.3",
 		"swiper": "^11.0.6"
 	},
 	"type": "module"

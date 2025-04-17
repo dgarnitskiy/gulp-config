@@ -1,87 +1,87 @@
 /* Reset and base styles  */
-* {
+.main * {
 	padding: 0px;
 	margin: 0px;
 	border: none;
 }
 
-*,
-*::before,
-*::after {
+.main *,
+.main *::before,
+.main *::after {
 	box-sizing: border-box;
 }
 
 /* Links */
 
-a,
-a:link,
-a:visited {
+.main a,
+.main a:link,
+.main a:visited {
 	text-decoration: none;
 }
 
-a:hover {
+.main a:hover {
 	text-decoration: none;
 }
 
 /* Common */
 
-aside,
-nav,
-footer,
-header,
-section,
-main {
+.main aside,
+.main nav,
+.main footer,
+.main header,
+.main section,
+.main main {
 	display: block;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
+.main h1,
+.main h2,
+.main h3,
+.main h4,
+.main h5,
+.main h6,
+.main p {
 	font-size: inherit;
 	font-weight: inherit;
 }
 
-ul,
-ul li {
+.main ul,
+.main ul li {
 	list-style: none;
 }
 
-img {
+.main img {
 	vertical-align: top;
 }
 
-img,
-svg {
+.main img,
+.main svg {
 	max-width: 100%;
 	height: auto;
 }
 
-address {
+.main address {
 	font-style: normal;
 }
 
 /* Form */
 
-input,
-textarea,
-button,
-select {
+.main input,
+.main textarea,
+.main button,
+.main select {
 	font-family: inherit;
 	font-size: inherit;
 	color: inherit;
 	background-color: transparent;
 }
 
-input::-ms-clear {
+.main input::-ms-clear {
 	display: none;
 }
 
-button,
-input[type='submit'] {
+.main button,
+.main input[type='submit'] {
 	display: inline-block;
 	box-shadow: none;
 	background-color: transparent;
@@ -89,22 +89,22 @@ input[type='submit'] {
 	cursor: pointer;
 }
 
-input:focus,
-input:active,
-button:focus,
-button:active {
+.main input:focus,
+.main input:active,
+.main button:focus,
+.main button:active {
 	outline: none;
 }
 
-button::-moz-focus-inner {
+.main button::-moz-focus-inner {
 	padding: 0;
 	border: 0;
 }
 
-label {
+.main label {
 	cursor: pointer;
 }
 
-legend {
+.main legend {
 	display: block;
 }

@@ -5,6 +5,7 @@ import { getPaths } from './gulp/config/paths.js'
 import cleanTask from './gulp/tasks/clean.js'
 import filesTask from './gulp/tasks/files.js'
 import fontsTask from './gulp/tasks/fonts.js'
+import { hsTask } from './gulp/tasks/hs.js'
 import imagesTask from './gulp/tasks/images.js'
 import jsTask from './gulp/tasks/js.js'
 import pugTask from './gulp/tasks/pug.js'
@@ -26,6 +27,10 @@ function setDevMode(done) {
 	setMode('dev')
 	done()
 }
+function setHSMode(done) {
+	setMode('hs')
+	done()
+}
 
 const buildTasks = [
 	() => pugTask(mergedContent),
@@ -41,8 +46,8 @@ const buildTasks = [
 gulp.task(
 	'default',
 	gulp.series(
-		cleanTask,
 		setDevMode,
+		cleanTask,
 		gulp.parallel(buildTasks),
 		gulp.parallel(serverTask, watchTask)
 	)
@@ -51,9 +56,11 @@ gulp.task(
 gulp.task(
 	'docs',
 	gulp.series(
-		cleanTask,
 		setDocsMode,
+		cleanTask,
 		gulp.parallel(buildTasks),
 		gulp.parallel(serverTask)
 	)
 )
+
+gulp.task('hs', gulp.series(setHSMode, cleanTask, ...buildTasks, hsTask))

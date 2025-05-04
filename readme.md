@@ -22,3 +22,9 @@ gulp
 ```
 gulp docs
 ```
+
+Собрать версию для hubspot:
+
+```
+gulp hs --module modulePath
+```

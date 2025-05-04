@@ -8,8 +8,11 @@ function Mode() {
 	const isDocs = () => {
 		return _currentMode === 'docs'
 	}
+	const isHs = () => {
+		return _currentMode === 'hs'
+	}
 
-	return { isDocs, setMode }
+	return { isDocs, isHs, setMode }
 }
 
 export default Mode

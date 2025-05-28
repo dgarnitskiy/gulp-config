@@ -4,6 +4,10 @@ import path from 'path'
 export default function mergeJSON(dir) {
 	let mergedData = {}
 
+	if (!fs.existsSync(dir)) {
+		return mergedData
+	}
+
 	function readDir(currentDir) {
 		const entries = fs.readdirSync(currentDir, { withFileTypes: true })
 
